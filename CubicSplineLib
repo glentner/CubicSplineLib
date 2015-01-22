@@ -1,0 +1,31 @@
+//
+// CubicSplineLib
+// CubicSplineLib/
+//
+// This header file simply allows the user to include all 
+// three levels of cubic spline interpolation
+//
+// Copyright (C) Geoffrey Lentner 2015. All rights reserved.
+// See LICENCE file. (GPL v2.0)
+//
+// contact: Geoffrey Lentner, B.S.
+//          Graduate Student / Researcher
+//          102 Natural Science Building
+//          Department of Physics & Astronomy
+//          University of Louisville
+//          Louisville, KY 40292 USA
+//
+// email:   geoffrey.lentner@louisville.edu
+//
+// updated: 2015-1-19 13:10:30 EST
+//
+
+#ifndef _CUBICSPLINELIB_HH_
+#define _CUBICSPLINELIB_HH_
+#include "CubicSpline.hh"
+//#include "BiCubicSpline.hh"
+//#include "TriCubicSpline.hh"
+//
+// The multidimensional interpolation routines are still
+// in development.
+#endif

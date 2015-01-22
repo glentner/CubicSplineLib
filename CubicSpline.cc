@@ -1,6 +1,6 @@
 //
 // CubicSpline.cc
-// GAIA-2.1.1
+// CubicSplineLib/
 //
 // Source file for the "CubicSpline" class. This object facilitates natural
 // cubic spline interpolation. Once instantiated the
@@ -49,6 +49,9 @@ CubicSpline<T>::CubicSpline( const std::vector<T>& _x_, const std::vector<T>& _y
     
     if ( parallel > omp_get_max_threads( ) )
         throw SplineError("[parallel > omp_get_max_threads()]");
+    
+    // set parallelism
+    omp_set_num_threads( parallel );
     
 	// last element in array has index 'n'
 	n = _x_.size( ) - 1;
@@ -207,46 +210,72 @@ void CubicSpline<T>::build_splines( ){
 
 template<class T>
 std::vector<T> CubicSpline<T>::interpolate( const std::vector<T>& new_x,
-    bool fixed, T value ) {
+    const bool& fixed, const T& value ) {
 
-	// declare return vector
     std::vector<T> output; output.resize( new_x.size( ) );
 
-    // walk the new grid and evaluate the appropriate spline
 	#pragma omp parallel for shared(new_x,output)
-	for ( long i = 0; i < new_x.size( ); i++ ) {
-    
-		// check if out of bounds
-		if ( new_x[i] < x[0] || new_x[i] > x[n] ){
-
-			// return a fixed value if out of bounds (desired for GAIA)
-            if ( fixed ) output[i] = value;
-
-			// otherwise return strait lines out of last interval (nature splines)
-			else if ( new_x[i] < x[0] )
-				output[i] = k[0] * ( new_x[i] - x[0] ) + y[0];
-			
-			else
-				output[i] = k[n] * ( new_x[i] - x[n] ) + y[n];
-
-		} else {
-		
-			// find the appropriate interval
-			long j = 1; while( new_x[i] > x[j] && j < n ) j++;
-            
-			// factor for spline interpolation
-			T t = ( new_x[i] - x[j-1] ) / ( x[j] - x[j-1] );
-
-			// evaluate the spline polynomial on interval 'j'
-			output[i] = (1 - t) * y[j-1] + t * y[j] + t * (1 - t) * (a[j] * 
-		    	        (1 - t) + b[j] * t); 
-    	}
-	}
+	for ( long i = 0; i < new_x.size( ); i++ )
+        output[i] = interpolate( new_x[i], fixed, value );
     
     return output;
 }
 
-// define allowed templates
+template<class T>
+T CubicSpline<T>::interpolate( const T& new_x, const bool& fixed,
+                              const T& value ) {
+    
+    T output;
+
+    if ( new_x < x[0] || new_x > x[n] ){
+
+        if ( fixed )
+            output = value;
+
+        else if ( new_x < x[0] )
+            output = k[0] * ( new_x - x[0] ) + y[0];
+        
+        else
+            output = k[n] * ( new_x - x[n] ) + y[n];
+        
+    } else {
+
+        long j = 1; while( new_x > x[j] && j < n ) j++;
+
+        T t = ( new_x - x[j-1] ) / ( x[j] - x[j-1] );
+
+        output = (1 - t) * y[j-1] + t * y[j] + t * (1 - t) * ( a[j] *
+                 (1 - t) + b[j] * t );
+    }
+    
+    return output;
+}
+
 template class CubicSpline<float>;
 template class CubicSpline<double>;
 template class CubicSpline<long double>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

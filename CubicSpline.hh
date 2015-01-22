@@ -1,6 +1,6 @@
 //
 // CubicSpline.hh
-// GAIA-2.1.1
+// CubicSplineLib/
 //
 // Header file for the "CubicSpline" class. This object facilitates natural
 // cubic spline interpolation. Once instantiated the
@@ -34,47 +34,37 @@ class CubicSpline {
 
 public:
 
-    // default constructor
     CubicSpline( ) { }
     
-    // constructor for new data set
     CubicSpline( const std::vector<T>& _x_, const std::vector<T>& _y_,
-             int parallel = 0, bool sorted = false );
+             int parallel = 1, bool sorted = false );
     
-    // copy constructor
     CubicSpline( const CubicSpline& );
-    
-    // default destructor
+
     ~CubicSpline( ) { }
-    
-    // interpolate onto new grid
+
     std::vector<T> interpolate( const std::vector<T>& new_x,
-        bool fixed = false, T value = 0 );
+        const bool& fixed = false, const T& value = 0 );
+    
+    T interpolate( const T& new_x, const bool& fixed = false,
+                  const T&value = 0 );
     
 protected:
     
-    // recursive quicksort of data arrays
     void quicksort( const long& , const long& );
     
-    // meta quicksort with parallel threads
     void quicksort( );
     
-    // spline building function
     void build_splines( );
-    
-    // local copies of input arrays _x_ and _y_
+
     std::vector<T> x, y;
-    
-    // coefficients for spline polynomials
+
     std::vector<T> a, b, c, d;
-    
-    // modified coefficients, "Thomas Algorithm"
+
     std::vector<T> c_prime, d_prime;
-    
-    // values of derivatives at knots
+
     std::vector<T> k;
-    
-    // last element in vectors
+
     int n;
     
 private:

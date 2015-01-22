@@ -1,9 +1,9 @@
-#include "CubicSpline.hh"
-#include "mt19937.hh"
-
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <random>
+
+#include "CubicSplineLib"
 
 #define pi 3.1415926
 
@@ -12,60 +12,56 @@ std::vector<double> linspace( double, double, int );
 
 int main( ) {
 
-	int knots = 30;
-	std::vector<double> x; x.resize( knots );
-	std::vector<double> y; y.resize( knots );
-
-	mt19937 generator( time(NULL) );
-
-	double start  = -5. * pi;
-	double finish =  5. * pi;
-	double range  = finish - start;
+	// sample sinc(x) on -6pi < x < 6pi
+	double start = -6.0 * pi;
+	double finish = 6.0 * pi;
+	double range = finish - start;
+	std::random_device device;
+	std::mt19937_64 random_number( device( ) );
+	int knots = 50;
+	std::vector<double> x_data, y_data;
 
 	for ( int i = 0; i < knots; i++ ) {
 
-		x[i] = start + range * generator.random_real( );
-		y[i] = function( x[i] );
+		x_data.push_back( start + range*random_number( )/random_number.max( ) );
+		y_data.push_back( sin( x_data[i] ) / x_data[i] );
 	}
 
-	CubicSpline<double> cubicspline( x, y, 4 );
+	// resample onto higher resolution fixed grid
+	int resolution = 1e5;
+	std::vector<double> new_y, new_x = linspace( start, finish, resolution );
+	
+	try {
+		
+		CubicSpline<double> my_data( x_data, y_data, 2); // the 2 says omp_set_num_threads(2)
+		new_y = my_data.interpolate( new_x );
 
-	int n = 10000;
-	std::vector<double> new_x = linspace( start, finish, n );
-	std::vector<double> new_y = cubicspline.interpolate( new_x );
+	} catch( std::exception& error ) {
 
-	std::ofstream output; output.open("data1.txt");
+		std::cerr << error.what( ) << std::endl;
+		return -1;
+	}
 
-	if ( output.is_open( ) ) {
+	// output results
+	std::ofstream original("original_data.txt"), resampled("resampled_data.txt");
+	
+	if ( original.is_open( ) ) {
 
 		for ( int i = 0; i < knots; i++ )
-			output << x[i] << " " << y[i] << std::endl;
+			original << x_data[i] << " " << y_data[i] << std::endl;
 
-		output.close( );
-
-	} else {
-
-		std::cerr << "IOError: Failed to open data1.txt!" << std::endl;
+		original.close( );
 	}
 
-	output.open("data2.txt");
+	if ( resampled.is_open( ) ) {
 
-	if ( output.is_open( ) ) {
+		for ( int i = 0; i < resolution; i++ )
+			resampled << new_x[i] << " " << new_y[i] << std::endl;
 
-		for ( int i = 0; i < n; i++ )
-			output << new_x[i] << " " << new_y[i] << std::endl;
-
-	} else {
-
-		std::cerr << "IOError: Failed to open data2.txt!" << std::endl;
+		resampled.close( );
 	}
 
 	return 0;
-}
-
-double function( double x ) {
-
-	return sin( x ) / x;
 }
 
 std::vector<double> linspace( double start, double finish, int points ) {
