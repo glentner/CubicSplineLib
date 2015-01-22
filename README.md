@@ -10,3 +10,8 @@ The CubicSpline class is fully functional.
 BiCubicSpline and TriCubicSpline are still being developed.
 Documentation and usage will be provided in the future.
 
+##Short Example Usage
+``C++
+CubicSpline<double> raw_data( x, y, 2 );
+``
+
