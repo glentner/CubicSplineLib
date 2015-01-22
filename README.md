@@ -5,6 +5,8 @@ This small C++ library contains my working code for performing
 natural cubic spline interpolation in one, two, and three
 dimensions.
 
+**dependencies:** OpenMP (omp.h)
+
 The CubicSpline class is fully functional.
 
 BiCubicSpline and TriCubicSpline are still being developed.
@@ -12,7 +14,20 @@ Documentation and usage will be provided in the future.
 
 ##Building
 
-You should be able to just run 'make'
+You should be able to just run 'make'. This compiles and links
+the programs. The user will either need to make this available
+on their standard include path or link to this directory.
+
+I recommend something like
+```bash
+export CSLDIR=~/path/to/CubicSplineLib
+export CSLINC="-I$CSLDIR -L$CSLDIR -lCubicSpline -fopenmp"
+```
+
+After which, programs can be compiled similar to:
+```bash
+g++ your_program.cc $CSLINC
+```
 
 ##Short Example Usage
 ```C++
