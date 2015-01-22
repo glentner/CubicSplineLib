@@ -19,3 +19,18 @@ CubicSpline<double> raw_data( x, y, 2 );
 std::vector<double> new_y = raw_data.interpolate( new_x );
 ```
 
+The user can construct the spline object with float, 
+double, or long double types. The third argument in
+the constructor is optional and has a default value
+of one. This says what the maximum allowed threads
+should be for OpenMP. There is a fourth optional argument
+that takes either true or false. By default this
+implementation using a quicksort algorithm to ensure
+the horizontal axis is in ascending order before 
+building the spline polynomials. This behavior can
+be supressed by specifying false. Also, in the 
+interpolation function, an optional second and third
+argument taking either true or false and a numeric
+type the same as the template respectively allow
+for returning fixed values outside the domain of the
+original data.
