@@ -10,6 +10,10 @@ The CubicSpline class is fully functional.
 BiCubicSpline and TriCubicSpline are still being developed.
 Documentation and usage will be provided in the future.
 
+##Building
+
+You should be able to just run 'make'
+
 ##Short Example Usage
 ```C++
 // create spline object
