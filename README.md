@@ -11,6 +11,8 @@ The CubicSpline class is fully functional. A test program is
 available in *CubicSpineTest.cc*, the results of which I
 have plotted in *CubicSplineTest.pdf* using Python.
 
+<img src="CubicSplineTest.png">
+
 BiCubicSpline and TriCubicSpline are still being developed.
 Documentation and usage will be provided in the future.
 
