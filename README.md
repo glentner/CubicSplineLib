@@ -59,7 +59,7 @@ original data.
 
 e.g.,
 ```C++
-raw_data( new_x, true, 0.0 );
+raw_data.interpolate( new_x, true, 0.0 );
 ```
 would return a std::vector containing 0.0 for all positions
 outside the original domain of 'x'.
