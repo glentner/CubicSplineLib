@@ -9,7 +9,7 @@ dimensions.
 
 The CubicSpline class is fully functional. A test program is
 available in *CubicSpineTest.cc*, the results of which I
-have plotted in *CubicSplineTest.pdf* using Python.
+have plotted in *CubicSplineTest.png* using Python.
 
 ![example](CubicSplineTest.png "Results of CubicSplineTest")
 
